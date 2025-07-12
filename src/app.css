@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+@theme {
+	--font-sans: 'Outfit', sans-serif;
+	--font-mono: 'Roboto Mono', monospace;
+	--color-primary: #2e3d96; /* Example primary color */
+	--color-secondary: #22cc99; /* Example secondary color */
+	--color-accent: #ff5722; /* Example accent color */
+	--color-off-white: #f2f0ef; /* Example accent color */
+	--aspect-ultrawide: 21 / 9; /* Example aspect ratio */
+	--color-dark: #111111;
+	--color-grayish: #585858;
+}
+
+* {
+	@apply font-sans;
+}
+html {
+	@apply min-h-screen;
+	@apply scroll-pt-20;
+}
+body {
+	@apply bg-off-white;
+	@apply min-h-screen;
+}
+
+.max-height-transition {
+	transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+	transition-property: max-height;
+	transition-duration: 150ms;
+}

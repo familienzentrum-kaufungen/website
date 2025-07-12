@@ -1,0 +1,49 @@
+services:
+  frontend-prod:
+    image: ghcr.io/familienzentrum-kaufungen/website-frontend:latest
+    profiles: ['production']
+    ports:
+      - '3000:3000'
+    environment:
+      API_TOKEN: fake-token-replace-me
+      API_URL: 'https://api.host.com/graphql'
+      PUBLIC_ASSET_URL: 'https://api.host.com/assets'
+
+  directus:
+    image: directus/directus:11.9
+    profiles: ['production', 'development']
+    ports:
+      - 8055:8055
+    volumes:
+      - ./backend/database:/directus/database
+      - ./backend/uploads:/directus/uploads
+      - ./backend/extensions:/directus/extensions
+    depends_on:
+      cache:
+        condition: service_healthy
+    environment:
+      DB_CLIENT: 'sqlite3'
+      DB_FILENAME: '/directus/database/data.db'
+      WEBSOCKETS_ENABLED: 'true'
+      CACHE_ENABLED: 'true'
+      CACHE_AUTO_PURGE: 'true'
+      CACHE_STORE: 'redis'
+      REDIS: 'redis://cache:6379'
+      SECRET: 'your-secret-key-for-encryption'
+      PUBLIC_URL: 'http://10.0.0.106:8055/'
+
+  cache:
+    image: redis:8-alpine
+    profiles: ['production', 'development']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 5s
+      start_period: 30s
+# optional - if you are using nginx-proxy-manager or something like that
+# networks:
+#   default:
+#     external: true
+#     name: nginx-proxy-manager-network
